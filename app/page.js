@@ -1,27 +1,12 @@
 import Validator from "./Validator";
-import ThemeToggle from "./ThemeToggle";
+import SiteHeader from "./components/SiteHeader";
+import SiteFooter from "./components/SiteFooter";
 import { SAMPLE_TEMPLATE } from "@/lib/validator";
 
 export default function Home() {
   return (
     <>
-      <header className="site-header">
-        <div className="inner">
-          <a className="brand" href="/">
-            <span className="logo">L</span>
-            <span>llms.txt Checker</span>
-          </a>
-          <nav className="nav">
-            <a href="#validator">Checker</a>
-            <a href="#how">How it works</a>
-            <a href="#faq">FAQ</a>
-            <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">
-              Spec
-            </a>
-            <ThemeToggle />
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="container">
         <section className="hero">
@@ -130,15 +115,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="container">
-          llms.txt Checker · Built on the{" "}
-          <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">
-            llmstxt.org
-          </a>{" "}
-          specification · {new Date().getFullYear()}
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

@@ -564,6 +564,70 @@ textarea {
   font-size: 14px;
   margin-top: 40px;
 }
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.footer-nav a {
+  color: var(--muted);
+  font-size: 14px;
+}
+.footer-nav a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+.footer-meta {
+  font-size: 13.5px;
+}
+
+/* Article / legal pages */
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 0 20px;
+}
+.page h1 {
+  font-size: clamp(26px, 4vw, 36px);
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+.page .updated {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+.page h2 {
+  font-size: 20px;
+  margin: 30px 0 10px;
+}
+.page p,
+.page li {
+  color: var(--text);
+  opacity: 0.92;
+}
+.page ul {
+  padding-left: 22px;
+}
+.page li {
+  margin-bottom: 7px;
+}
+.page a {
+  text-decoration: underline;
+}
+.contact-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin-top: 18px;
+}
+.contact-card .email {
+  font-size: 20px;
+  font-weight: 700;
+}
 
 @media (max-width: 560px) {
   .input-row {
