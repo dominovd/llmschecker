@@ -1,4 +1,5 @@
 import Validator from "./Validator";
+import ThemeToggle from "./ThemeToggle";
 import { SAMPLE_TEMPLATE } from "@/lib/validator";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
             <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">
               Spec
             </a>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
