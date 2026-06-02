@@ -5,7 +5,7 @@ import { buildWithLLM } from "@/lib/llm";
 import { validateLlmsTxt } from "@/lib/validator";
 import { rateLimit, cacheGet, cacheSet, getClientIp } from "@/lib/ratelimit";
 
-const RATE = { limit: 8, windowSec: 3600 }; // 8 generations/hour/IP
+const RATE = { limit: 3, windowSec: 24 * 3600 }; // 3 generations/day/IP
 const CACHE_TTL = 24 * 3600; // 24h
 
 function parseSitemaps(input) {
