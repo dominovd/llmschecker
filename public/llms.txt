@@ -1,0 +1,14 @@
+# llms.txt Checker
+
+> A free online checker and validator for llms.txt files, following the llmstxt.org specification. Validate by URL or by pasting text, with link checking and a live preview.
+
+This site helps website owners verify that their /llms.txt file is correctly structured for large language models.
+
+## Docs
+
+- [llms.txt specification](https://llmstxt.org/): The official proposal defining the llms.txt format.
+- [Checker tool](https://llmschecker.net/): The validator interface.
+
+## Optional
+
+- [FastHTML llms.txt example](https://www.fastht.ml/docs/llms.txt): A real-world example file referenced by the spec.
