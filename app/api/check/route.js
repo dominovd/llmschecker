@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { safeFetch, readCappedText } from "@/lib/ssrf";
+import { rateLimit, getClientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,6 +45,14 @@ export async function POST(request) {
   const candidates = normalizeTarget(body.url);
   if (!candidates) {
     return NextResponse.json({ error: "Please enter a valid URL or domain." }, { status: 400 });
+  }
+
+  const rl = await rateLimit(`check:${getClientIp(request)}`, { limit: 40, windowSec: 60 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down and try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rl.resetSec) } }
+    );
   }
 
   const errors = [];

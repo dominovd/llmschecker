@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { safeFetch, assertPublicUrl } from "@/lib/ssrf";
+import { rateLimit, getClientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -50,6 +51,14 @@ export async function POST(request) {
 
   if (urls.length === 0) {
     return NextResponse.json({ results: [] });
+  }
+
+  const rl = await rateLimit(`links:${getClientIp(request)}`, { limit: 20, windowSec: 60 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down and try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rl.resetSec) } }
+    );
   }
 
   const results = await pool(urls, checkOne, 8);
