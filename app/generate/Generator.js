@@ -19,13 +19,28 @@ export default function Generator() {
   const [data, setData] = useState(null);
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [progress, setProgress] = useState(null);
 
   const validation = useMemo(() => (text ? validateLlmsTxt(text) : null), [text]);
+
+  const progressLabel = useMemo(() => {
+    if (!progress) return null;
+    if (progress.phase === "generating") return "Assembling and validating…";
+    const s = progress.step;
+    if (s === "discover") return "Discovering URLs (sitemap / robots.txt)…";
+    if (s === "discovered")
+      return `Found ${progress.discovered ?? 0} URLs (${progress.source || "—"}); reading top ${
+        progress.ranked ?? 0
+      } pages…`;
+    if (s === "fetch") return `Reading pages… ${progress.done ?? 0}/${progress.total ?? 0}`;
+    return "Working…";
+  }, [progress]);
 
   const handleGenerate = useCallback(async () => {
     setError(null);
     setData(null);
     setText("");
+    setProgress(null);
     if (!domain.trim()) {
       setError({ message: "Please enter a domain." });
       return;
@@ -37,23 +52,55 @@ export default function Generator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain, sitemaps }),
       });
-      const json = await res.json();
-      if (!res.ok) {
+
+      // Non-stream error responses (400 etc.) come back as JSON.
+      const ctype = res.headers.get("content-type") || "";
+      if (!res.ok || !ctype.includes("text/event-stream") || !res.body) {
+        const json = await res.json().catch(() => ({}));
         setError({ message: json.error || "Generation failed." });
         return;
       }
-      if (!json.llmsTxt) {
-        setError({ message: json.warning || "No crawlable pages were found for this domain." });
-        return;
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      let got = false;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        let idx;
+        while ((idx = buf.indexOf("\n\n")) >= 0) {
+          const raw = buf.slice(0, idx).replace(/^data:\s?/, "");
+          buf = buf.slice(idx + 2);
+          if (!raw) continue;
+          let ev;
+          try {
+            ev = JSON.parse(raw);
+          } catch {
+            continue;
+          }
+          if (ev.phase === "progress" || ev.phase === "generating") {
+            setProgress(ev);
+          } else if (ev.phase === "error") {
+            setError({ message: ev.message || "Generation failed." });
+          } else if (ev.phase === "result") {
+            got = true;
+            setData(ev);
+            setText(ev.llmsTxt || "");
+          }
+        }
       }
-      setData(json);
-      setText(json.llmsTxt);
+      if (!got) {
+        setError((prev) => prev || { message: "No result was produced." });
+      }
     } catch (e) {
       setError({ message: "Network error: " + e.message });
     } finally {
       setLoading(false);
+      setProgress(null);
     }
-  }, [domain]);
+  }, [domain, sitemaps]);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -119,7 +166,8 @@ export default function Generator() {
 
       {loading && (
         <p className="hint" style={{ marginTop: 14 }}>
-          Crawling the site and assembling your llms.txt… this can take a few seconds.
+          <span className="spinner" style={{ marginRight: 8 }} />
+          {progressLabel || "Crawling the site and assembling your llms.txt…"}
         </p>
       )}
 
