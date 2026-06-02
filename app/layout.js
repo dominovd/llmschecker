@@ -16,6 +16,13 @@ export const metadata = {
     "LLM optimization",
   ],
   alternates: { canonical: SITE },
+  verification: {
+    google: "aZD0EbvpfddmwxF9VMHewrxdBKwZde_rgHQtTY4QDjk",
+  },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.png" }],
+  },
   openGraph: {
     type: "website",
     url: SITE,
