@@ -31,6 +31,19 @@ public/
   robots.txt
 ```
 
+## Generator (optional AI)
+
+The `/generate` page crawls a domain's sitemap and builds an `llms.txt` from **real
+URLs only** (see `docs/generator-architecture.md`). Grouping uses a deterministic
+rule-based assembler by default. To enable AI grouping, set an LLM provider key as an
+environment variable (see `.env.example`):
+
+- `ANTHROPIC_API_KEY` (or `OPENAI_API_KEY`), optionally `LLM_PROVIDER` and `LLM_MODEL`.
+
+Without a key, the generator automatically falls back to rule-based grouping — no errors.
+The model only ever receives page metadata and references pages by id; code maps ids back
+to real crawled URLs, so the AI cannot introduce invented links.
+
 ## Local development
 
 ```bash

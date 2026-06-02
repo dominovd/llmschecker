@@ -30,6 +30,16 @@ export default function Privacy() {
             log, store, or share the content of those files or the URLs you check.
           </p>
 
+          <h2>Generator and AI</h2>
+          <p>
+            When you use the <strong>Generator</strong>, we crawl your site’s public pages
+            (sitemap and page metadata) to build the file. If AI grouping is enabled, only
+            non-sensitive page metadata — page paths, titles, descriptions, and headings — is sent
+            to our configured LLM provider to organize the result. We never send page metadata that
+            isn’t already publicly available on your site, and the generator only ever outputs URLs
+            that were actually found on your site. Results are not stored.
+          </p>
+
           <h2>Cookies</h2>
           <p>
             We do not use tracking or advertising cookies. The only thing stored on your device is a

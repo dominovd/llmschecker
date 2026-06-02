@@ -112,8 +112,9 @@ export default function Generator() {
             Crawl summary
           </div>
           <p className="hint" style={{ marginTop: 0 }}>
-            Source: {data.discovery?.source || "—"} · discovered {data.counts?.discovered ?? 0} URLs ·
-            ranked {data.counts?.ranked ?? 0} · read {data.counts?.fetched ?? 0} pages ·{" "}
+            Grouping: {data.method === "ai" ? "AI (grounded)" : "rule-based"} · source:{" "}
+            {data.discovery?.source || "—"} · discovered {data.counts?.discovered ?? 0} URLs · ranked{" "}
+            {data.counts?.ranked ?? 0} · read {data.counts?.fetched ?? 0} pages ·{" "}
             {data.sections?.length ?? 0} section(s).
           </p>
 

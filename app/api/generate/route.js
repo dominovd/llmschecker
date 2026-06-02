@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { crawlSite } from "@/lib/crawl";
 import { buildFromCrawl } from "@/lib/assemble";
+import { buildWithLLM } from "@/lib/llm";
 import { validateLlmsTxt } from "@/lib/validator";
 
 export const runtime = "nodejs";
@@ -30,14 +31,22 @@ export async function POST(request) {
         { status: 200 }
       );
     }
-    const built = buildFromCrawl(result);
+    // Try grounded LLM grouping; fall back to deterministic rules.
+    let built = await buildWithLLM(result);
+    let method = "ai";
+    if (!built) {
+      built = buildFromCrawl(result);
+      method = "rules";
+    }
     const validation = validateLlmsTxt(built.llmsTxt);
     // Drop the heavy parsed AST from the response.
     const { parsed, ...validationSummary } = validation;
     return NextResponse.json({
       ...result,
+      method,
       projectName: built.projectName,
       summary: built.summary,
+      details: built.details || [],
       sections: built.sections,
       llmsTxt: built.llmsTxt,
       validation: validationSummary,
