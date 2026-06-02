@@ -10,7 +10,7 @@ export default function SiteHeader() {
         </a>
         <nav className="nav">
           <a href="/#validator">Checker</a>
-          <a href="/#how">How it works</a>
+          <a href="/generate">Generator</a>
           <a href="/about">About</a>
           <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">
             Spec

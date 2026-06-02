@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { crawlSite } from "@/lib/crawl";
+import { buildFromCrawl } from "@/lib/assemble";
+import { validateLlmsTxt } from "@/lib/validator";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,7 +30,18 @@ export async function POST(request) {
         { status: 200 }
       );
     }
-    return NextResponse.json(result);
+    const built = buildFromCrawl(result);
+    const validation = validateLlmsTxt(built.llmsTxt);
+    // Drop the heavy parsed AST from the response.
+    const { parsed, ...validationSummary } = validation;
+    return NextResponse.json({
+      ...result,
+      projectName: built.projectName,
+      summary: built.summary,
+      sections: built.sections,
+      llmsTxt: built.llmsTxt,
+      validation: validationSummary,
+    });
   } catch (e) {
     return NextResponse.json({ error: e.message || "Crawl failed." }, { status: 400 });
   }
