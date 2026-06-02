@@ -1,11 +1,34 @@
 import Validator from "./Validator";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import JsonLd from "./components/JsonLd";
 import { SAMPLE_TEMPLATE } from "@/lib/validator";
+import {
+  SITE,
+  homeFaqs,
+  checkerSteps,
+  faqSchema,
+  howToSchema,
+  softwareAppSchema,
+  breadcrumbSchema,
+} from "@/lib/seo";
 
 export default function Home() {
+  const schemas = [
+    softwareAppSchema({
+      name: "llms.txt Checker & Validator",
+      description:
+        "Free online tool to validate an llms.txt file against the llmstxt.org specification, by URL or pasted text.",
+      url: SITE,
+    }),
+    howToSchema("How to validate an llms.txt file", checkerSteps, SITE),
+    faqSchema(homeFaqs),
+    breadcrumbSchema([{ name: "Home", url: SITE }]),
+  ];
+
   return (
     <>
+      <JsonLd data={schemas} />
       <SiteHeader />
 
       <main className="container">
@@ -68,49 +91,39 @@ export default function Home() {
             </div>
           </div>
 
+          <h2>How to use the llms.txt checker</h2>
+          <ol className="steps">
+            {checkerSteps.map((s, i) => (
+              <li key={i}>
+                <strong>{s.name}.</strong> {s.text}
+              </li>
+            ))}
+          </ol>
+
           <h2>Sample template</h2>
           <p>A minimal valid file looks like this:</p>
           <pre className="codeblock">{SAMPLE_TEMPLATE}</pre>
 
+          <div className="cta">
+            <h2>Need to create one from scratch?</h2>
+            <p>
+              Don’t have an llms.txt yet? Use the{" "}
+              <a href="/generate">llms.txt generator</a> to build one automatically from your site’s
+              sitemap — grounded in your real pages, then validate it here.
+            </p>
+            <a className="btn" href="/generate">
+              Open the generator
+            </a>
+          </div>
+
           <h2 id="faq">Frequently asked questions</h2>
           <div className="faq">
-            <details>
-              <summary>Is llms.txt required for my website?</summary>
-              <p>
-                No. It is an optional, emerging standard. It is most useful for documentation-heavy
-                sites, products, and any site you want LLMs and AI agents to understand accurately.
-              </p>
-            </details>
-            <details>
-              <summary>Where should the file live?</summary>
-              <p>
-                At the root of your domain, served at <code>/llms.txt</code> as plain text/markdown.
-                Subpath hosting is also allowed by the spec.
-              </p>
-            </details>
-            <details>
-              <summary>What is the only required section?</summary>
-              <p>
-                The H1 title with your project/site name. Everything else — the summary blockquote,
-                detail paragraphs, and file-list sections — is optional but recommended.
-              </p>
-            </details>
-            <details>
-              <summary>How is llms.txt different from robots.txt?</summary>
-              <p>
-                <code>robots.txt</code> controls crawler access. <code>llms.txt</code> provides a
-                curated, LLM-readable overview of your content — they serve different purposes and
-                coexist.
-              </p>
-            </details>
-            <details>
-              <summary>Does this tool store my data?</summary>
-              <p>
-                No. Validation of pasted text runs in your browser. URL fetching and link checks are
-                proxied through a stateless serverless function only to avoid CORS — nothing is
-                stored.
-              </p>
-            </details>
+            {homeFaqs.map((f, i) => (
+              <details key={i}>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
           </div>
         </section>
       </main>

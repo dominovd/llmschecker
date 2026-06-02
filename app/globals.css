@@ -537,6 +537,60 @@ textarea {
   white-space: pre;
 }
 
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  margin: 14px 0;
+}
+.steps li {
+  position: relative;
+  padding: 12px 16px 12px 52px;
+  margin-bottom: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+}
+.steps li strong {
+  color: var(--text);
+}
+.steps li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+}
+.cta {
+  margin: 36px 0;
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(109, 139, 255, 0.1), rgba(138, 109, 255, 0.1));
+  text-align: center;
+}
+.cta h2 {
+  margin: 0 0 8px;
+}
+.cta p {
+  margin: 0 auto 16px;
+  max-width: 560px;
+}
+.cta .btn {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .faq details {
   border: 1px solid var(--border);
   border-radius: 10px;
