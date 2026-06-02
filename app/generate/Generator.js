@@ -12,6 +12,8 @@ const ICON = {
 
 export default function Generator() {
   const [domain, setDomain] = useState("");
+  const [sitemaps, setSitemaps] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
@@ -33,7 +35,7 @@ export default function Generator() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ domain }),
+        body: JSON.stringify({ domain, sitemaps }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -89,8 +91,31 @@ export default function Generator() {
       </div>
       <p className="hint">
         We crawl <code>sitemap.xml</code> and read page metadata. Large sites are capped for speed —
-        you can edit the result below.
+        you can edit the result below.{" "}
+        <button
+          type="button"
+          className="linklike"
+          onClick={() => setShowAdvanced((v) => !v)}
+        >
+          {showAdvanced ? "Hide sitemap options" : "Have a custom sitemap?"}
+        </button>
       </p>
+
+      {showAdvanced && (
+        <div style={{ marginTop: 6 }}>
+          <textarea
+            style={{ minHeight: 84 }}
+            placeholder={"Optional: sitemap URLs, one per line\nhttps://example.com/custom-sitemap.xml"}
+            value={sitemaps}
+            onChange={(e) => setSitemaps(e.target.value)}
+            spellCheck={false}
+          />
+          <p className="hint" style={{ marginTop: 4 }}>
+            If provided, we use these sitemaps first (full URL or a path like{" "}
+            <code>/sitemap-index.xml</code>). Otherwise we auto-discover via robots.txt.
+          </p>
+        </div>
+      )}
 
       {loading && (
         <p className="hint" style={{ marginTop: 14 }}>

@@ -227,6 +227,15 @@ textarea {
   font-size: 13px;
   margin: 8px 2px 0;
 }
+.linklike {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
 
 .btn {
   border: none;

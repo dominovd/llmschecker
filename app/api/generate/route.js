@@ -8,10 +8,23 @@ import { rateLimit, cacheGet, cacheSet, getClientIp } from "@/lib/ratelimit";
 const RATE = { limit: 8, windowSec: 3600 }; // 8 generations/hour/IP
 const CACHE_TTL = 24 * 3600; // 24h
 
-function cacheKeyForDomain(input) {
+function parseSitemaps(input) {
+  if (Array.isArray(input)) return input.map((s) => String(s).trim()).filter(Boolean).slice(0, 10);
+  if (typeof input === "string") {
+    return input
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 10);
+  }
+  return [];
+}
+
+function cacheKeyForDomain(input, sitemaps) {
   let raw = (input || "").trim().toLowerCase();
   raw = raw.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
-  return `gen:${raw}`;
+  const smPart = sitemaps && sitemaps.length ? "|sm:" + sitemaps.join(",").toLowerCase() : "";
+  return `gen:${raw}${smPart}`;
 }
 
 export const runtime = "nodejs";
@@ -33,8 +46,10 @@ export async function POST(request) {
     return NextResponse.json({ error: "Please provide a domain." }, { status: 400 });
   }
 
+  const sitemaps = parseSitemaps(body.sitemaps);
+
   // Serve from cache first (unless the caller asks for a fresh crawl).
-  const cacheKey = cacheKeyForDomain(domain);
+  const cacheKey = cacheKeyForDomain(domain, sitemaps);
   if (!body.refresh) {
     const cached = await cacheGet(cacheKey);
     if (cached) return NextResponse.json({ ...cached, cached: true });
@@ -51,7 +66,7 @@ export async function POST(request) {
   }
 
   try {
-    const result = await crawlSite(domain);
+    const result = await crawlSite(domain, { sitemaps });
     if (result.pages.length === 0) {
       return NextResponse.json(
         { ...result, warning: "No crawlable pages were found for this domain." },
