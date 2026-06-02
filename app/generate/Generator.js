@@ -189,6 +189,7 @@ export default function Generator() {
             {data.discovery?.source || "—"} · discovered {data.counts?.discovered ?? 0} URLs · ranked{" "}
             {data.counts?.ranked ?? 0} · read {data.counts?.fetched ?? 0} pages ·{" "}
             {data.sections?.length ?? 0} section(s).
+            {data.partial && " · stopped early at the time limit — result may be partial."}
           </p>
 
           <div className="section-title">Generated llms.txt (editable)</div>
