@@ -1,34 +1,24 @@
 import { NextResponse } from "next/server";
+import { safeFetch, assertPublicUrl } from "@/lib/ssrf";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_LINKS = 60;
+const UA = "llmschecker.net/1.0 (+https://llmschecker.net)";
 
 async function checkOne(url) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), 8000);
   try {
-    let res = await fetch(url, {
-      method: "HEAD",
-      redirect: "follow",
-      signal: controller.signal,
-      headers: { "User-Agent": "llmschecker.net/1.0 (+https://llmschecker.net)" },
-    });
-    // Some servers don't support HEAD — retry with GET.
+    // Validate before doing any network work (cheap reject for private hosts).
+    await assertPublicUrl(url);
+    let res = await safeFetch(url, { method: "HEAD", headers: { "User-Agent": UA } }, { timeoutMs: 8000 });
     if (res.status === 405 || res.status === 501) {
-      res = await fetch(url, {
-        method: "GET",
-        redirect: "follow",
-        signal: controller.signal,
-        headers: { "User-Agent": "llmschecker.net/1.0 (+https://llmschecker.net)" },
-      });
+      res = await safeFetch(url, { method: "GET", headers: { "User-Agent": UA } }, { timeoutMs: 8000 });
     }
     return { url, status: res.status, ok: res.ok };
   } catch (e) {
-    return { url, status: 0, ok: false, error: e.name === "AbortError" ? "timeout" : e.message };
-  } finally {
-    clearTimeout(t);
+    const err = e.name === "AbortError" ? "timeout" : e.message;
+    return { url, status: 0, ok: false, error: err };
   }
 }
 

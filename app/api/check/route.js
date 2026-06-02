@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { safeFetch, readCappedText } from "@/lib/ssrf";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,24 +33,6 @@ function normalizeTarget(input) {
   return candidates;
 }
 
-async function fetchWithTimeout(url, ms = 12000) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), ms);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      redirect: "follow",
-      headers: {
-        "User-Agent": "llmschecker.net/1.0 (+https://llmschecker.net)",
-        Accept: "text/plain, text/markdown, */*",
-      },
-    });
-    return res;
-  } finally {
-    clearTimeout(t);
-  }
-}
-
 export async function POST(request) {
   let body;
   try {
@@ -66,13 +49,17 @@ export async function POST(request) {
   const errors = [];
   for (const candidate of candidates) {
     try {
-      const res = await fetchWithTimeout(candidate);
+      const res = await safeFetch(
+        candidate,
+        { headers: { "User-Agent": "llmschecker.net/1.0 (+https://llmschecker.net)", Accept: "text/plain, text/markdown, */*" } },
+        { timeoutMs: 12000, maxRedirects: 5 }
+      );
       if (res.ok) {
-        const content = await res.text();
+        const content = await readCappedText(res, 5 * 1024 * 1024);
         const ct = res.headers.get("content-type") || "";
         return NextResponse.json({
           content,
-          finalUrl: res.url || candidate,
+          finalUrl: res.finalUrl || candidate,
           requestedUrl: candidate,
           contentType: ct,
           status: res.status,
@@ -80,7 +67,8 @@ export async function POST(request) {
       }
       errors.push(`${candidate} → HTTP ${res.status}`);
     } catch (e) {
-      errors.push(`${candidate} → ${e.name === "AbortError" ? "timed out" : e.message}`);
+      const msg = e.name === "AbortError" ? "timed out" : e.message;
+      errors.push(`${candidate} → ${msg}`);
     }
   }
 
