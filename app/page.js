@@ -54,7 +54,9 @@ export default function Home() {
             site (<code>/llms.txt</code>) that gives large language models a concise, curated map of
             your most useful content. Unlike <code>robots.txt</code> (access control) or{" "}
             <code>sitemap.xml</code> (every indexable page), llms.txt is a hand-picked, LLM-friendly
-            overview meant to be read at inference time.
+            overview meant to be read at inference time. It's also one of the signals in Lighthouse's
+            experimental{" "}
+            <a href="/guides/agentic-browsing">Agentic Browsing audit</a> for AI-agent readiness.
           </p>
 
           <h2>What this checker validates</h2>

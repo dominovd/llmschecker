@@ -88,7 +88,8 @@ export default function GeneratePage() {
             <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">
               llmstxt.org
             </a>{" "}
-            specification.
+            specification. A valid file is also one of the signals in Lighthouse's experimental{" "}
+            <a href="/guides/agentic-browsing">Agentic Browsing audit</a> for AI-agent readiness.
           </p>
 
           <h2>How to generate an llms.txt file</h2>
