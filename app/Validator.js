@@ -121,12 +121,14 @@ export default function Validator() {
         <button
           className={"tab" + (mode === "url" ? " active" : "")}
           onClick={() => setMode("url")}
+          aria-pressed={mode === "url"}
         >
           URL Input
         </button>
         <button
           className={"tab" + (mode === "text" ? " active" : "")}
           onClick={() => setMode("text")}
+          aria-pressed={mode === "text"}
         >
           Text Input
         </button>
@@ -137,6 +139,7 @@ export default function Validator() {
           <div className="input-row">
             <input
               type="text"
+              aria-label="Website URL or domain containing an llms.txt file"
               placeholder="example.com  or  https://example.com/llms.txt"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -154,6 +157,7 @@ export default function Validator() {
       ) : (
         <>
           <textarea
+            aria-label="llms.txt content to validate"
             placeholder="Paste your llms.txt content here..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -187,7 +191,9 @@ export default function Validator() {
       {result && (
         <div className="results">
           <div className={"result-banner " + (result.valid ? "ok" : "bad")}>
-            <span className="big">{result.valid ? "✓" : "✕"}</span>
+            <span className="big" aria-hidden="true">
+              {result.valid ? "✓" : "✕"}
+            </span>
             <div>
               {result.valid
                 ? "Valid — your file meets the required structure."
@@ -203,7 +209,9 @@ export default function Validator() {
           <div className="checks">
             {result.checks.map((c, i) => (
               <div className="check" key={i}>
-                <span className={"icon " + c.status}>{ICON[c.status]}</span>
+                <span className={"icon " + c.status} aria-hidden="true">
+                  {ICON[c.status]}
+                </span>
                 <div className="body">
                   <div className="label">
                     {c.label}

@@ -127,6 +127,7 @@ export default function Generator() {
       <div className="input-row">
         <input
           type="text"
+          aria-label="Website domain to generate an llms.txt for"
           placeholder="yourdomain.com"
           value={domain}
           onChange={(e) => setDomain(e.target.value)}
@@ -152,6 +153,7 @@ export default function Generator() {
         <div style={{ marginTop: 6 }}>
           <textarea
             style={{ minHeight: 84 }}
+            aria-label="Custom sitemap URLs, one per line"
             placeholder={"Optional: sitemap URLs, one per line\nhttps://example.com/custom-sitemap.xml"}
             value={sitemaps}
             onChange={(e) => setSitemaps(e.target.value)}
@@ -193,7 +195,12 @@ export default function Generator() {
           </p>
 
           <div className="section-title">Generated llms.txt (editable)</div>
-          <textarea value={text} onChange={(e) => setText(e.target.value)} spellCheck={false} />
+          <textarea
+            aria-label="Generated llms.txt (editable)"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            spellCheck={false}
+          />
           <div className="actions">
             <button className="btn" onClick={handleDownload}>
               Download llms.txt
@@ -207,7 +214,9 @@ export default function Generator() {
             <>
               <div className="section-title">Validation</div>
               <div className={"result-banner " + (validation.valid ? "ok" : "bad")}>
-                <span className="big">{validation.valid ? "✓" : "✕"}</span>
+                <span className="big" aria-hidden="true">
+                  {validation.valid ? "✓" : "✕"}
+                </span>
                 <div>
                   {validation.valid
                     ? "Valid — the generated file meets the required structure."
@@ -217,7 +226,9 @@ export default function Generator() {
               <div className="checks">
                 {validation.checks.map((c, i) => (
                   <div className="check" key={i}>
-                    <span className={"icon " + c.status}>{ICON[c.status]}</span>
+                    <span className={"icon " + c.status} aria-hidden="true">
+                      {ICON[c.status]}
+                    </span>
                     <div className="body">
                       <div className="label">
                         {c.label}

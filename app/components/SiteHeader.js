@@ -5,7 +5,7 @@ export default function SiteHeader() {
     <header className="site-header">
       <div className="inner">
         <a className="brand" href="/">
-          <span className="logo">L</span>
+          <span className="logo" aria-hidden="true">L</span>
           <span>llms.txt Checker</span>
         </a>
         <nav className="nav">
