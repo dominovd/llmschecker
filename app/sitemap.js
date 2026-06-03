@@ -2,7 +2,15 @@ const SITE = "https://llmschecker.net";
 
 export default function sitemap() {
   const now = new Date();
-  const routes = ["", "/generate", "/about", "/contact", "/privacy", "/terms"];
+  const routes = [
+    "",
+    "/generate",
+    "/guides/agentic-browsing",
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+  ];
   return routes.map((path) => ({
     url: `${SITE}${path || "/"}`,
     lastModified: now,

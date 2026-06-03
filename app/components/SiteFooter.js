@@ -3,6 +3,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="container">
         <nav className="footer-nav">
+          <a href="/guides/agentic-browsing">Agentic Browsing guide</a>
           <a href="/about">About</a>
           <a href="/contact">Contact</a>
           <a href="/privacy">Privacy</a>
